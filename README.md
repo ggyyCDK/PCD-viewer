@@ -1,36 +1,197 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PCD Viewer 使用手册
 
-## Getting Started
+这是一个基于 `Next.js + Three.js` 的点云查看工具，支持加载 `.pcd` 文件、基础视角控制、套索选区、选中后高亮上色，以及控制台耗时输出。
 
-First, run the development server:
+## 1. 功能概览
+
+- 加载本地 `.pcd` 点云文件
+- 左键拖拽旋转视角
+- 右键拖拽平移视角
+- 滚轮缩放
+- 套索选择选中点
+- 套索选中并上色
+- 重置选区，恢复原始点云
+- 在浏览器控制台输出“套索选中并上色”的耗时，单位为 `ms`
+
+## 2. 运行环境
+
+- Node.js `20+`
+- npm `10+`
+
+## 3. 安装依赖
+
+在项目根目录执行：
+
+```bash
+npm install
+```
+
+## 4. 启动项目
+
+开发环境：
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+生产构建：
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+代码检查：
 
-## Learn More
+```bash
+npm run lint
+```
 
-To learn more about Next.js, take a look at the following resources:
+默认访问地址：
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```text
+http://localhost:3000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 5. 使用说明
 
-## Deploy on Vercel
+### 5.1 加载点云文件
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. 打开页面后，点击左上角的 `选择 PCD 文件`
+2. 选择本地 `.pcd` 文件
+3. 文件解析成功后，场景会自动加载点云，并自动调整相机位置
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+注意：
+
+- 目前只支持 `.pcd` 文件
+- 如果文件读取失败或解析失败，页面底部会显示错误信息
+
+### 5.2 视角控制
+
+- 左键拖拽：旋转
+- 右键拖拽：平移
+- 滚轮：缩放
+
+### 5.3 套索选择
+
+点击 `套索选择` 后进入套索模式：
+
+1. 在画面中按住鼠标左键拖拽，绘制选区
+2. 松开鼠标后自动执行选区计算
+3. 只保留被选中的点
+
+完成后可以继续：
+
+- 点击 `标记上色`：将选中的点高亮显示
+- 点击 `重置选区`：恢复完整点云
+
+### 5.4 套索选中并上色
+
+点击 `套索选中并上色` 后：
+
+1. 在画面中按住鼠标左键拖拽，绘制选区
+2. 松开鼠标后自动执行选区计算
+3. 保留完整点云，并将选中的点高亮显示
+
+### 5.5 退出套索模式
+
+当处于套索模式时，再次点击当前激活按钮即可退出：
+
+- `退出套索`
+
+## 6. 控制台耗时日志
+
+执行“套索选中并上色”后，浏览器控制台会输出耗时日志，例如：
+
+```text
+[套索选中并上色] points=123456 selected=7890 time=42.7ms
+```
+
+字段说明：
+
+- `points`：参与计算的点总数
+- `selected`：被选中的点数
+- `time`：本次“套索选中并上色”的总耗时，单位 `ms`
+
+如果本次没有选中任何点，也会输出日志，例如：
+
+```text
+[套索选中并上色] points=123456 selected=0 time=18.4ms
+```
+
+## 7. 项目结构
+
+当前 `pcd-viewer` 模块按层级拆分如下：
+
+```text
+src/app/components/pcd-viewer
+├── components
+│   └── PCDViewer.tsx
+├── hooks
+│   └── usePCDViewer.ts
+├── lib
+│   ├── viewerUtils.ts
+│   └── workerScripts.ts
+├── styles
+│   └── PCDViewer.module.css
+├── types
+│   └── index.ts
+└── index.ts
+```
+
+职责说明：
+
+- `components`：视图层组件
+- `hooks`：交互逻辑、Three.js 生命周期、文件上传、套索流程
+- `lib`：纯工具函数和 Worker 脚本
+- `styles`：样式文件
+- `types`：共享类型
+
+## 8. 常见问题
+
+### 8.1 页面能打开，但没有点云
+
+常见原因：
+
+- 没有上传 `.pcd` 文件
+- 文件格式不正确
+- 文件解析失败
+
+先检查页面底部是否有错误提示。
+
+### 8.2 右键拖拽没有平移
+
+当前实现已显式固定鼠标映射：
+
+- 左键 `ROTATE`
+- 右键 `PAN`
+- 中键 `DOLLY`
+
+如果浏览器或系统级工具占用了右键行为，优先检查浏览器扩展和系统手势设置。
+
+### 8.3 套索后没有结果
+
+常见原因：
+
+- 选区范围过小
+- 当前视角下没有覆盖到有效点
+- 点数很多但当前套索区域没有命中
+
+可以在控制台查看是否输出：
+
+```text
+selected=0
+```
+
+## 9. 当前技术栈
+
+- Next.js `16.1.6`
+- React `19.2.3`
+- Three.js `0.183.2`
+- TypeScript `5.9.3`
+
+## 10. 后续维护建议
+
+- 如果继续扩展点云功能，优先在 `hooks` 和 `lib` 内扩展，不要把逻辑重新堆回组件文件
+- 样式统一放在 `styles/PCDViewer.module.css`
+- 新增点云交互时，优先保持“渲染层 / 业务逻辑 / Worker / 工具函数”分层

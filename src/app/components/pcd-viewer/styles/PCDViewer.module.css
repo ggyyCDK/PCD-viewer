@@ -1,0 +1,245 @@
+.root {
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --panel-shadow: 0 20px 50px rgba(2, 6, 23, 0.35);
+  --panel-blur: blur(18px);
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  isolation: isolate;
+  user-select: none;
+  -webkit-user-select: none;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(59, 130, 246, 0.18),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(16, 185, 129, 0.14),
+      transparent 26%
+    ),
+    linear-gradient(180deg, #0b1220 0%, #050816 100%);
+  color: #f8fafc;
+}
+
+.viewport {
+  position: absolute;
+  inset: 0;
+}
+
+.viewport :global(canvas) {
+  display: block;
+}
+
+.lassoCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.lassoCanvasActive {
+  pointer-events: auto;
+  cursor: crosshair;
+}
+
+.lassoCanvasInactive {
+  pointer-events: none;
+  cursor: default;
+}
+
+.toolbar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  max-width: calc(100vw - 32px);
+}
+
+.fileLabel,
+.controlButton,
+.fileBadge,
+.lassoBanner,
+.loadingCard,
+.errorCard,
+.footerTips {
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: var(--panel-blur);
+}
+
+.fileLabel,
+.controlButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.7rem 1.15rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.fileLabel {
+  background: rgba(59, 130, 246, 0.92);
+  color: #fff;
+  cursor: pointer;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.controlButton {
+  border: none;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.controlButton:hover {
+  transform: translateY(-1px);
+}
+
+.primaryButton {
+  background: rgba(79, 70, 229, 0.92);
+  color: #fff;
+}
+
+.warningButton {
+  background: rgba(245, 158, 11, 0.9);
+  color: #fff;
+}
+
+.dangerButton {
+  background: rgba(239, 68, 68, 0.92);
+  color: #fff;
+}
+
+.successButton {
+  background: rgba(34, 197, 94, 0.9);
+  color: #fff;
+}
+
+.accentButton {
+  background: rgba(163, 230, 53, 0.92);
+  color: #15210d;
+}
+
+.fileBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.56);
+  color: rgba(226, 232, 240, 0.92);
+  font-size: 0.8125rem;
+}
+
+.lassoBanner {
+  position: absolute;
+  top: 72px;
+  left: 50%;
+  z-index: 3;
+  transform: translateX(-50%);
+  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.82);
+  color: #fff;
+  font-size: 0.875rem;
+}
+
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.loadingCard {
+  padding: 1rem 1.6rem;
+  border-radius: 20px;
+  background: rgba(2, 6, 23, 0.72);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.errorCard {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  z-index: 3;
+  transform: translateX(-50%);
+  padding: 0.8rem 1rem;
+  border-radius: 18px;
+  background: rgba(127, 29, 29, 0.84);
+  color: #fecaca;
+  font-size: 0.875rem;
+}
+
+.footerTips {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 3;
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  border-radius: 20px;
+  background: rgba(2, 6, 23, 0.48);
+  color: rgba(226, 232, 240, 0.78);
+  text-align: right;
+}
+
+.footerTip {
+  font-size: 0.75rem;
+  line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    top: 12px;
+    left: 12px;
+    gap: 10px;
+    max-width: calc(100vw - 24px);
+  }
+
+  .fileLabel,
+  .controlButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .fileBadge {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .lassoBanner {
+    top: auto;
+    bottom: 96px;
+    width: calc(100vw - 24px);
+    text-align: center;
+  }
+
+  .footerTips {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    text-align: left;
+  }
+}
