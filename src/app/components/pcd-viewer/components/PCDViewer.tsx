@@ -110,9 +110,9 @@ export default function PCDViewer() {
         {fileName && <span className={styles.fileBadge}>{fileName}</span>}
       </div>
 
-      {lassoMode && (
+      {/* {lassoMode && (
         <div className={styles.lassoBanner}>套索模式：在画面上拖拽绘制选区</div>
-      )}
+      )} */}
 
       {loading && (
         <div className={styles.loadingOverlay}>
